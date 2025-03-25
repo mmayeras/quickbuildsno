@@ -1,39 +1,3 @@
-apiVersion: v1beta1
-kind: AgentConfig
-metadata:
-  name: sno-cluster
-rendezvousIP: 10.6.153.120
-bootArtifactsBaseURL: http://10.6.153.158/
-hosts:
-  - hostname: master-0
-    interfaces:
-      - name: enp1s0
-        macAddress: 02:a1:3b:00:00:62
-    rootDeviceHints:
-      deviceName: /dev/vda
-    networkConfig:
-      interfaces:
-        - name: enp1s0
-          type: ethernet
-          state: up
-          mac-address: 02:a1:3b:00:00:62
-          ipv4:
-            enabled: true
-            address:
-              - ip: 10.6.153.120
-                prefix-length: 24
-            dhcp: false
-      dns-resolver:
-        config:
-          server:
-            - 10.11.5.160
-      routes:
-        config:
-          - destination: 0.0.0.0/0
-            next-hop-address: 10.6.153.254
-            next-hop-interface: enp1s0
-            table-id: 254
-[cloud-user@rhel9-harlequin-cardinal-76 sno]$ cat install-config.yaml
 apiVersion: v1
 baseDomain: sno.domain
 compute:
