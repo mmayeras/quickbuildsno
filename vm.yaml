@@ -1,0 +1,61 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: sno
+  namespace: mmayeras
+spec:
+  dataVolumeTemplates:
+  - metadata:
+      creationTimestamp: null
+      name:  my-sno-vm-volume-blank
+    spec:
+      source:
+        blank: {}
+      storage:
+        resources:
+          requests:
+            storage: 150Gi
+        storageClassName: ocs-storagecluster-ceph-rbd-virtualization
+  instancetype:
+    kind: VirtualMachineClusterInstancetype
+    name: u1.2xlarge
+  running: true
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        network.kubevirt.io/headlessService: headless
+    spec:
+      architecture: amd64
+      domain:
+        firmware:
+          bootloader:
+            efi:
+              secureBoot: false
+        devices:
+          autoattachPodInterface: false
+          disks:
+          - name: rootdisk
+            disk:
+              bus: virtio
+          - cdrom:
+              bus: sata
+            name: isovolume
+          interfaces:
+          - bridge: {}
+            macAddress: 02:a1:3b:00:00:62
+            model: virtio
+            name: nic1
+        resources: {}
+      networks:
+      - multus:
+          networkName: default/vlan530
+        name: nic1
+      subdomain: headless
+      volumes:
+      - dataVolume:
+          name: my-sno-vm-volume-blank
+        name: rootdisk
+      - name: isovolume
+        persistentVolumeClaim:
+          claimName: isovolume
